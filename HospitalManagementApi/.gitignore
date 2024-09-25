@@ -1,0 +1,65 @@
+# Ignore build outputs and other generated files
+bin/
+obj/
+publish/
+*.exe
+*.dll
+*.pdb
+*.db
+*.log
+*.vspscc
+*.vssscc
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# MacOS specific files
+.DS_Store
+
+# VS Code specific files
+.vscode/
+
+# Rider specific files
+.idea/
+.idea_modules/
+
+# Visual Studio specific files
+.vs/
+
+# ASP.NET Core Secret Manager secrets.json
+**/secrets.json
+
+# Node.js files (for projects with frontend like React)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore package lock file if you're using yarn
+package-lock.json
+
+# Logs
+*.log
+
+# Ignore database-related files
+*.mdf
+*.ldf
+*.db
+*.bak
+
+# Ignore configuration/environment files (adjust for your security needs)
+appsettings.Development.json
+appsettings.Staging.json
+appsettings.Production.json
+appsettings.Local.json
+appsettings.Test.json
+appsettings.json
+
+# JWT Secret Key if stored in a separate environment file
+.env
+
+# Ignore publish output
+publish/
