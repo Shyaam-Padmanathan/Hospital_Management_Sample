@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using HospitalManagementApi.Exceptions;
 
 namespace HospitalManagementApi.Middlewares
 {

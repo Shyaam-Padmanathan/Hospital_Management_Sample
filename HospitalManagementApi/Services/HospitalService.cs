@@ -28,7 +28,7 @@ namespace HospitalManagementApi.Services
         // Add a new hospital
         public async Task<Hospital> AddHospitalAsync(Hospital hospital)
         {
-            if (await HospitalExists(hospital.HospName))
+            if (await HospitalExists(hospital.Name))
             {
                 throw new Exception("Hospital with the same name already exists.");
             }
@@ -47,7 +47,7 @@ namespace HospitalManagementApi.Services
                 throw new Exception("Hospital not found.");
             }
 
-            existingHospital.HospName = hospital.HospName;
+            existingHospital.Name = hospital.Name;
             existingHospital.Country = hospital.Country;
             existingHospital.Address = hospital.Address;
 
@@ -58,20 +58,24 @@ namespace HospitalManagementApi.Services
         // Delete a hospital
         public async Task DeleteHospitalAsync(int id)
         {
-            var hospital = await _context.Hospitals.FindAsync(id);
-            if (hospital == null)
-            {
-                throw new Exception("Hospital not found.");
-            }
+            var hospital = await _context.Hospitals
+                .Include(h => h.Patients)
+                .FirstOrDefaultAsync(h => h.Id == id);
 
-            _context.Hospitals.Remove(hospital);
-            await _context.SaveChangesAsync();
+            if (hospital != null)
+            {
+                // Delete related patients first
+                _context.Patients.RemoveRange(hospital.Patients);
+                _context.Hospitals.Remove(hospital);
+
+                await _context.SaveChangesAsync();
+            }
         }
 
         // Check if hospital already exists
         private async Task<bool> HospitalExists(string hospName)
         {
-            return await _context.Hospitals.AnyAsync(h => h.HospName == hospName);
+            return await _context.Hospitals.AnyAsync(h => h.Name == hospName);
         }
     }
 }

@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 
 // Configure the DbContext with SQL Server
 builder.Services.AddDbContext<HospitalDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("HospitalDbContext")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register Services
 builder.Services.AddScoped<HospitalService>();
