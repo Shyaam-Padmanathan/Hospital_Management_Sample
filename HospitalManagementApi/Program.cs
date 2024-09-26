@@ -34,6 +34,13 @@ builder.Services.AddScoped<DoctorService>();
 builder.Services.AddScoped<PatientService>();
 builder.Services.AddScoped<JwtTokenService>();
 
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
+
+
 // JWT Authentication Setup
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Secret"]); 
 builder.Services.AddAuthentication(options =>

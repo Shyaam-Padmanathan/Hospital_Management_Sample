@@ -16,9 +16,9 @@ namespace HospitalManagementApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Patient>()
+            modelBuilder.Entity<Doctor>()
                 .HasOne(p => p.Hospital)
-                .WithMany(h => h.Patients)
+                .WithMany(h => h.Doctors)
                 .HasForeignKey(p => p.HospitalId)
                 .OnDelete(DeleteBehavior.Cascade); // Allow cascade delete for this relationship
 

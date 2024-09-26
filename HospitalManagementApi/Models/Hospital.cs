@@ -7,7 +7,6 @@ namespace HospitalManagementApi.Models
         public string Country { get; set; }
         public string Address { get; set; }
 
-        public ICollection<Doctor>? Doctors { get; set; } = null;
-        public ICollection<Patient>? Patients { get; set; } = null;
+        public virtual ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
     }
 }

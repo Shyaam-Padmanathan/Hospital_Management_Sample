@@ -17,7 +17,7 @@ namespace HospitalManagementApi.Controllers
         }
 
         // GET: api/Patient
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Patient>>> GetPatients()
         {

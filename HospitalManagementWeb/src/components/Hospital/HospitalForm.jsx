@@ -31,8 +31,6 @@ const HospitalForm = ({ onHandleCancel, refresh, editHospitalForm, type }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // eslint-disable-next-line no-debugger
-      debugger;
       if (type == "create") {
         await axios.post(`${apiUrl}/Hospital`, hospital);
       } else {

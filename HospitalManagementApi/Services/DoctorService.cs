@@ -16,13 +16,19 @@ namespace HospitalManagementApi.Services
         // Get all doctors
         public async Task<IEnumerable<Doctor>> GetDoctorsAsync()
         {
-            return await _context.Doctors.Include(d => d.Hospital).ToListAsync();
+            return await _context.Doctors.Include(d => d.Hospital).AsNoTracking().ToListAsync();
         }
 
         // Get doctor by id
         public async Task<Doctor> GetDoctorByIdAsync(int id)
         {
             return await _context.Doctors.Include(d => d.Hospital).FirstOrDefaultAsync(d => d.Id == id);
+        }
+
+        // Get all doctors by HospitalId
+        public async Task<IEnumerable<Doctor>> GetDoctorsByHospitalIdAsync(int hospitalId)
+        {
+            return await _context.Doctors.Include(d => d.Hospital).Where(d => d.HospitalId == hospitalId).AsNoTracking().ToListAsync();
         }
 
         // Add a new doctor
@@ -33,7 +39,7 @@ namespace HospitalManagementApi.Services
             {
                 throw new Exception("Hospital not found.");
             }
-
+            doctor.Hospital = hospital;
             _context.Doctors.Add(doctor);
             await _context.SaveChangesAsync();
             return doctor;

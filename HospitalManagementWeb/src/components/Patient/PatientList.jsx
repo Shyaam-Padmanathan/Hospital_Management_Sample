@@ -15,11 +15,19 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import PatientForm from "./PatientForm";
-import { ModalStyle } from "../Patient/PatientList";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 const apiUrl = import.meta.env.VITE_API_URL;
+export const ModalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "auto",
+  boxShadow: 24,
+  padding: "10px",
+};
 
 const PatientList = () => {
   const [patients, setPatients] = useState([]);
@@ -87,8 +95,10 @@ const PatientList = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>Name</TableCell>
-                  <TableCell>Address</TableCell>
-                  <TableCell>Country</TableCell>
+                  <TableCell>Age</TableCell>
+                  <TableCell>Gender</TableCell>
+                  <TableCell>Consulting Doctor</TableCell>
+                  <TableCell>Hospital</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -108,9 +118,11 @@ const PatientList = () => {
                 <TableBody>
                   {patients.map((patient) => (
                     <TableRow key={patient.id}>
-                      <TableCell>{patient.name}</TableCell>
-                      <TableCell>{patient.address}</TableCell>
-                      <TableCell>{patient.country}</TableCell>
+                      <TableCell>{patient.firstName} {patient.lastName}</TableCell>
+                      <TableCell>{patient.age}</TableCell>
+                      <TableCell>{patient.gender}</TableCell>
+                      <TableCell>{patient.doctor.name}</TableCell>
+                      <TableCell>{patient.hospital.name}</TableCell>
                       <TableCell>
                         <EditIcon
                           color="primary"

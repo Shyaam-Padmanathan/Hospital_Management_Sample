@@ -40,6 +40,8 @@ namespace HospitalManagementApi.Services
             {
                 throw new Exception("Doctor not found.");
             }
+            patient.Doctor = doctor;
+            patient.Hospital = hospital;
 
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();

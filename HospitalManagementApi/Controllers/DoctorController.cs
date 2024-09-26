@@ -1,6 +1,7 @@
 using HospitalManagementApi.Models;
 using HospitalManagementApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HospitalManagementApi.Controllers
 {
@@ -20,8 +21,8 @@ namespace HospitalManagementApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctors()
         {
-            var doctors = await _doctorService.GetDoctorsAsync();
-            return Ok(doctors);
+                var doctors = await _doctorService.GetDoctorsAsync();
+                return Ok(doctors);
         }
 
         // GET: api/doctor/{id}
@@ -35,6 +36,14 @@ namespace HospitalManagementApi.Controllers
             }
 
             return Ok(doctor);
+        }
+
+        // GET: api/Doctor/hospital/{hospitalId}
+        [HttpGet("hospital/{hospitalId}")]
+        public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctorsByHospitalId(int hospitalId) 
+        {
+            var doctors = await _doctorService.GetDoctorsByHospitalIdAsync(hospitalId);
+            return Ok(doctors);
         }
 
         // POST: api/doctor

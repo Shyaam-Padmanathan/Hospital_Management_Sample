@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
 namespace HospitalManagementApi.Models
 {
     public class Doctor
@@ -9,9 +12,12 @@ namespace HospitalManagementApi.Models
         public string Gender { get; set; }
 
         // Foreign key to Hospital
+        [ForeignKey("Hospital")]
         public int HospitalId { get; set; }
-        public Hospital Hospital { get; set; }
 
-         public ICollection<Patient> Patients { get; set; }
+        public virtual Hospital Hospital { get; set; } = new Hospital();
+
+        [JsonIgnore]
+        public virtual ICollection<Patient> Patients { get; set; } = new List<Patient>();
     }
-}
+}   

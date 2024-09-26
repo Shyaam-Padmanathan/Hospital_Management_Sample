@@ -59,13 +59,11 @@ namespace HospitalManagementApi.Services
         public async Task DeleteHospitalAsync(int id)
         {
             var hospital = await _context.Hospitals
-                .Include(h => h.Patients)
                 .FirstOrDefaultAsync(h => h.Id == id);
 
             if (hospital != null)
             {
                 // Delete related patients first
-                _context.Patients.RemoveRange(hospital.Patients);
                 _context.Hospitals.Remove(hospital);
 
                 await _context.SaveChangesAsync();

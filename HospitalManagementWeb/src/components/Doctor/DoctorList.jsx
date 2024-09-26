@@ -87,8 +87,10 @@ const HospitalList = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>Name</TableCell>
-                  <TableCell>Address</TableCell>
-                  <TableCell>Country</TableCell>
+                  <TableCell>Qualification</TableCell>
+                  <TableCell>Job Specification</TableCell>
+                  <TableCell>Gender</TableCell>
+                  <TableCell>Hospital</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -109,8 +111,10 @@ const HospitalList = () => {
                   {doctors.map((doctor) => (
                     <TableRow key={doctor.id}>
                       <TableCell>{doctor.name}</TableCell>
-                      <TableCell>{doctor.address}</TableCell>
-                      <TableCell>{doctor.country}</TableCell>
+                      <TableCell>{doctor.qualification}</TableCell>
+                      <TableCell>{doctor.jobSpecification}</TableCell>
+                      <TableCell>{doctor.gender}</TableCell>
+                      <TableCell>{doctor.hospital.name}</TableCell>
                       <TableCell>
                         <EditIcon
                           color="primary"
