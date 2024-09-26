@@ -12,6 +12,7 @@ import {
   Card,
   IconButton,
   Modal,
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 import PatientForm from "./PatientForm";
@@ -34,6 +35,7 @@ const PatientList = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleOpenCreate = () => {
     setOpenCreate(true);
@@ -43,7 +45,7 @@ const PatientList = () => {
   };
   const handleClose = () => {
     setOpenCreate(false);
-    setOpenUpdate(false)
+    setOpenUpdate(false);
     setSelectedPatient({});
   };
 
@@ -62,7 +64,9 @@ const PatientList = () => {
 
   const handleDelete = async (id) => {
     try {
+      setLoading(true);
       await axios.delete(`${apiUrl}/Patient/${id}`);
+      setLoading(false);
       fetchPatients();
     } catch (error) {
       console.error("There was an error deleting the patients!", error);
@@ -118,7 +122,9 @@ const PatientList = () => {
                 <TableBody>
                   {patients.map((patient) => (
                     <TableRow key={patient.id}>
-                      <TableCell>{patient.firstName} {patient.lastName}</TableCell>
+                      <TableCell>
+                        {patient.firstName} {patient.lastName}
+                      </TableCell>
                       <TableCell>{patient.age}</TableCell>
                       <TableCell>{patient.gender}</TableCell>
                       <TableCell>{patient.doctor.name}</TableCell>
@@ -132,11 +138,18 @@ const PatientList = () => {
                             handleOpenUpdate();
                           }}
                         />
-                        <DeleteIcon
-                          sx={{ marginLeft: "10px", cursor: "pointer" }}
-                          color="error"
-                          onClick={() => handleDelete(patient.id)}
-                        />
+                        {loading ? (
+                          <CircularProgress
+                            sx={{ marginLeft: "10px", cursor: "pointer" }}
+                            color="error"
+                          />
+                        ) : (
+                          <DeleteIcon
+                            sx={{ marginLeft: "10px", cursor: "pointer" }}
+                            color="error"
+                            onClick={() => handleDelete(patient.id)}
+                          />
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}

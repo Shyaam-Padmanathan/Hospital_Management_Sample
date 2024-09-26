@@ -12,6 +12,7 @@ import {
   Card,
   IconButton,
   Modal,
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 import HospitalForm from "./HospitalForm";
@@ -26,6 +27,8 @@ const HospitalList = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState({});
+  const [loading, setLoading] = useState(false);
+
 
   const handleOpenCreate = () => {
     setOpenCreate(true);
@@ -35,7 +38,7 @@ const HospitalList = () => {
   };
   const handleClose = () => {
     setOpenCreate(false);
-    setOpenUpdate(false)
+    setOpenUpdate(false);
     setSelectedHospital({});
   };
 
@@ -54,7 +57,9 @@ const HospitalList = () => {
 
   const handleDelete = async (id) => {
     try {
+      setLoading(true);
       await axios.delete(`${apiUrl}/Hospital/${id}`);
+      setLoading(false);
       fetchHospitals();
     } catch (error) {
       console.error("There was an error deleting the hospital!", error);
@@ -120,11 +125,18 @@ const HospitalList = () => {
                             handleOpenUpdate();
                           }}
                         />
-                        <DeleteIcon
-                          sx={{ marginLeft: "10px", cursor: "pointer" }}
-                          color="error"
-                          onClick={() => handleDelete(hospital.id)}
-                        />
+                        {loading ? (
+                          <CircularProgress
+                            sx={{ marginLeft: "10px", cursor: "pointer" }}
+                            color="error"
+                          />
+                        ) : (
+                          <DeleteIcon
+                            sx={{ marginLeft: "10px", cursor: "pointer" }}
+                            color="error"
+                            onClick={() => handleDelete(hospital.id)}
+                          />
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}

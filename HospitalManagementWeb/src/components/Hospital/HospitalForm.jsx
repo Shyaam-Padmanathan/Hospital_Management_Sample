@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TextField, Button, Box } from "@mui/material";
+import { TextField, Button, Box, CircularProgress } from "@mui/material";
 import axios from "axios";
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -10,6 +10,8 @@ const HospitalForm = ({ onHandleCancel, refresh, editHospitalForm, type }) => {
     address: "",
     country: "",
   });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (editHospitalForm) {
@@ -22,7 +24,20 @@ const HospitalForm = ({ onHandleCancel, refresh, editHospitalForm, type }) => {
       ...hospital,
       [e.target.name]: e.target.value,
     });
+    setErrors({
+      ...errors,
+      [e.target.name]: "", // Clear error when user types
+    });
   };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!hospital.name) newErrors.name = "Name is required";
+    if (!hospital.address) newErrors.address = "Address is required";
+    if (!hospital.country) newErrors.country = "Country is required";
+    return newErrors;
+  };
+
   const handleCancel = (e) => {
     e.preventDefault();
     onHandleCancel();
@@ -30,7 +45,13 @@ const HospitalForm = ({ onHandleCancel, refresh, editHospitalForm, type }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     try {
+      setLoading(true);
       if (type == "create") {
         await axios.post(`${apiUrl}/Hospital`, hospital);
       } else {
@@ -38,6 +59,7 @@ const HospitalForm = ({ onHandleCancel, refresh, editHospitalForm, type }) => {
       }
       refresh();
       onHandleCancel();
+      setLoading(false);
     } catch (error) {
       console.error("There was an error saving the hospital!", error);
     }
@@ -52,6 +74,8 @@ const HospitalForm = ({ onHandleCancel, refresh, editHospitalForm, type }) => {
         onChange={handleChange}
         fullWidth
         margin="normal"
+        error={!!errors.name}
+        helperText={errors.name}
       />
       <TextField
         label="Address"
@@ -60,6 +84,8 @@ const HospitalForm = ({ onHandleCancel, refresh, editHospitalForm, type }) => {
         onChange={handleChange}
         fullWidth
         margin="normal"
+        error={!!errors.address}
+        helperText={errors.address}
       />
       <TextField
         label="Country"
@@ -68,11 +94,19 @@ const HospitalForm = ({ onHandleCancel, refresh, editHospitalForm, type }) => {
         onChange={handleChange}
         fullWidth
         margin="normal"
+        error={!!errors.country}
+        helperText={errors.country}
       />
       <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
-        <Button type="submit" variant="contained" color="primary">
-          Save
-        </Button>
+        {!loading ? (
+          <Button type="submit" variant="contained" color="primary">
+            Save
+          </Button>
+        ) : (
+          <Button variant="contained" color="primary" disabled>
+            <CircularProgress color="white"/>
+          </Button>
+        )}
         <Button onClick={handleCancel} variant="contained" color="info">
           Cancel
         </Button>

@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import { TextField, Button, Box, FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  CircularProgress,
+} from "@mui/material";
 import axios from "axios";
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -10,11 +20,11 @@ const DoctorForm = ({ onHandleCancel, refresh, editDoctorForm, type }) => {
     qualification: "",
     jobSpecification: "",
     gender: "",
-    hospitalId: "", 
+    hospitalId: "",
   });
   const [errors, setErrors] = useState({});
-  const [hospitals, setHospitals] = useState([]); // State for hospitals
-
+  const [hospitals, setHospitals] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (editDoctorForm) {
@@ -47,10 +57,13 @@ const DoctorForm = ({ onHandleCancel, refresh, editDoctorForm, type }) => {
   const validate = () => {
     const newErrors = {};
     if (!doctor.name) newErrors.name = "Name is required";
-    if (!doctor.qualification) newErrors.qualification = "Qualification is required";
-    if (!doctor.jobSpecification) newErrors.jobSpecification = "Job Specification is required";
+    if (!doctor.qualification)
+      newErrors.qualification = "Qualification is required";
+    if (!doctor.jobSpecification)
+      newErrors.jobSpecification = "Job Specification is required";
     if (!doctor.gender) newErrors.gender = "Gender selection is required";
-    if (!doctor.hospitalId) newErrors.hospitalId = "Hospital selection is required";
+    if (!doctor.hospitalId)
+      newErrors.hospitalId = "Hospital selection is required";
     return newErrors;
   };
   const handleCancel = (e) => {
@@ -66,21 +79,23 @@ const DoctorForm = ({ onHandleCancel, refresh, editDoctorForm, type }) => {
       return;
     }
     try {
+      setLoading(true);
       if (type == "create") {
-      const data=  await axios.post(`${apiUrl}/Doctor`, doctor);
-      console.log('data',data);
+        const data = await axios.post(`${apiUrl}/Doctor`, doctor);
+        console.log("data", data);
       } else {
         await axios.put(`${apiUrl}/Doctor/${doctor.id}`, doctor);
       }
       refresh();
       onHandleCancel();
+      setLoading(false);
     } catch (error) {
       console.error("There was an error saving the doctor!", error);
     }
   };
 
   return (
-<Box component="form" onSubmit={handleSubmit}>
+    <Box component="form" onSubmit={handleSubmit}>
       <TextField
         label="Name"
         name="name"
@@ -145,12 +160,20 @@ const DoctorForm = ({ onHandleCancel, refresh, editDoctorForm, type }) => {
             </MenuItem>
           ))}
         </Select>
-        {errors.hospitalId && <FormHelperText>{errors.hospitalId}</FormHelperText>}
+        {errors.hospitalId && (
+          <FormHelperText>{errors.hospitalId}</FormHelperText>
+        )}
       </FormControl>
       <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
-        <Button type="submit" variant="contained" color="primary">
-          Save
-        </Button>
+        {!loading ? (
+          <Button type="submit" variant="contained" color="primary">
+            Save
+          </Button>
+        ) : (
+          <Button variant="contained" color="primary" disabled>
+            <CircularProgress color="white" />
+          </Button>
+        )}
         <Button onClick={handleCancel} variant="contained" color="info">
           Cancel
         </Button>

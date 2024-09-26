@@ -12,6 +12,7 @@ import {
   Card,
   IconButton,
   Modal,
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 import DoctorForm from "./DoctorForm";
@@ -26,6 +27,7 @@ const HospitalList = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleOpenCreate = () => {
     setOpenCreate(true);
@@ -54,7 +56,9 @@ const HospitalList = () => {
 
   const handleDelete = async (id) => {
     try {
+      setLoading(true);
       await axios.delete(`${apiUrl}/Doctor/${id}`);
+      setLoading(false);
       fetchDoctors();
     } catch (error) {
       console.error("There was an error deleting the doctors!", error);
@@ -124,11 +128,18 @@ const HospitalList = () => {
                             handleOpenUpdate();
                           }}
                         />
-                        <DeleteIcon
-                          sx={{ marginLeft: "10px", cursor: "pointer" }}
-                          color="error"
-                          onClick={() => handleDelete(doctor.id)}
-                        />
+                       {loading ? (
+                          <CircularProgress
+                            sx={{ marginLeft: "10px", cursor: "pointer" }}
+                            color="error"
+                          />
+                        ) : (
+                          <DeleteIcon
+                            sx={{ marginLeft: "10px", cursor: "pointer" }}
+                            color="error"
+                            onClick={() => handleDelete(doctor.id)}
+                          />
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}

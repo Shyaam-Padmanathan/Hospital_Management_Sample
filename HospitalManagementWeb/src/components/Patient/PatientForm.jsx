@@ -8,6 +8,7 @@ import {
   FormControl,
   MenuItem,
   FormHelperText,
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -20,11 +21,12 @@ const PatientForm = ({ onHandleCancel, refresh, editPatientForm, type }) => {
     age: "",
     gender: "",
     hospitalId: "",
-    doctorId: "", // Add this field to store the selected doctor ID
+    doctorId: "",
   });
   const [errors, setErrors] = useState({});
   const [hospitals, setHospitals] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (editPatientForm) {
@@ -101,6 +103,7 @@ const PatientForm = ({ onHandleCancel, refresh, editPatientForm, type }) => {
     try {
       patient.doctor = null;
       patient.hospital = null;
+      setLoading(true);
       if (type === "create") {
         await axios.post(`${apiUrl}/Patient`, patient);
       } else {
@@ -108,6 +111,7 @@ const PatientForm = ({ onHandleCancel, refresh, editPatientForm, type }) => {
       }
       refresh();
       onHandleCancel();
+      setLoading(false);
     } catch (error) {
       console.error("There was an error saving the patient!", error);
     }
@@ -205,9 +209,15 @@ const PatientForm = ({ onHandleCancel, refresh, editPatientForm, type }) => {
         {errors.doctorId && <FormHelperText>{errors.doctorId}</FormHelperText>}
       </FormControl>
       <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
-        <Button type="submit" variant="contained" color="primary">
-          Save
-        </Button>
+        {!loading ? (
+          <Button type="submit" variant="contained" color="primary">
+            Save
+          </Button>
+        ) : (
+          <Button variant="contained" color="primary" disabled>
+            <CircularProgress color="white" />
+          </Button>
+        )}
         <Button onClick={handleCancel} variant="contained" color="info">
           Cancel
         </Button>
