@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextField, Button, Box } from "@mui/material";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // eslint-disable-next-line react/prop-types
-const HospitalForm = ({ onHandleCancel }) => {
+const HospitalForm = ({ onHandleCancel, refresh, editHospitalForm, type }) => {
   const [hospital, setHospital] = useState({
     name: "",
     address: "",
     country: "",
   });
+
+  useEffect(() => {
+    if (editHospitalForm) {
+      setHospital(editHospitalForm);
+    }
+  }, [editHospitalForm]);
 
   const handleChange = (e) => {
     setHospital({
@@ -24,8 +31,15 @@ const HospitalForm = ({ onHandleCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/hospitals", hospital); // Replace with your API endpoint
-      // props.onFormSubmit();
+      // eslint-disable-next-line no-debugger
+      debugger;
+      if (type == "create") {
+        await axios.post(`${apiUrl}/Hospital`, hospital);
+      } else {
+        await axios.put(`${apiUrl}/Hospital/${hospital.id}`, hospital);
+      }
+      refresh();
+      onHandleCancel();
     } catch (error) {
       console.error("There was an error saving the hospital!", error);
     }

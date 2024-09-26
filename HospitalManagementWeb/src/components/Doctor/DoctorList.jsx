@@ -11,43 +11,53 @@ import {
   Typography,
   Card,
   IconButton,
-  Modal
+  Modal,
 } from "@mui/material";
 import axios from "axios";
 import DoctorForm from "./DoctorForm";
 import { ModalStyle } from "../Patient/PatientList";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+const apiUrl = import.meta.env.VITE_API_URL;
 
-const DoctorList = () => {
-  const [hospitals, setHospitals] = useState([]);
-  const [open, setOpen] = useState(false);
+const HospitalList = () => {
+  const [doctors, setDoctors] = useState([]);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState({});
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleOpenCreate = () => {
+    setOpenCreate(true);
+  };
+  const handleOpenUpdate = () => {
+    setOpenUpdate(true);
   };
   const handleClose = () => {
-    setOpen(false);
+    setOpenCreate(false);
+    setOpenUpdate(false);
+    setSelectedDoctor({});
   };
 
   useEffect(() => {
-    fetchHospitals();
+    fetchDoctors();
   }, []);
 
-  const fetchHospitals = async () => {
+  const fetchDoctors = async () => {
     try {
-      //const response = await axios.get('/api/hospitals'); // Replace with your API endpoint
-      setHospitals([]);
+      const response = await axios.get(`${apiUrl}/Doctor`);
+      setDoctors(response.data);
     } catch (error) {
-      console.error("There was an error fetching the hospitals!", error);
+      console.error("There was an error fetching the doctors!", error);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/hospitals/${id}`); // Replace with your API endpoint
-      fetchHospitals();
+      await axios.delete(`${apiUrl}/Doctor/${id}`);
+      fetchDoctors();
     } catch (error) {
-      console.error("There was an error deleting the hospital!", error);
+      console.error("There was an error deleting the doctors!", error);
     }
   };
 
@@ -57,12 +67,12 @@ const DoctorList = () => {
         <Box mb={4} display="flex" justifyContent="space-between">
           <Typography variant="h2">Doctors</Typography>
           <Button
-            onClick={handleOpen}
+            onClick={handleOpenCreate}
             variant="outlined"
             size="small"
             color="primary"
           >
-            Add Doctors
+            Add Doctor
           </Button>
         </Box>
         <Box
@@ -82,29 +92,7 @@ const DoctorList = () => {
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
-              {hospitals.length ? (
-                <TableBody>
-                  {hospitals.map((hospital) => (
-                    <TableRow key={hospital.id}>
-                      <TableCell>{hospital.name}</TableCell>
-                      <TableCell>{hospital.address}</TableCell>
-                      <TableCell>{hospital.country}</TableCell>
-                      <TableCell>
-                        <Button variant="contained" color="primary">
-                          Edit
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          onClick={() => handleDelete(hospital.id)}
-                        >
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              ) : (
+              {doctors.length == 0 ? (
                 <Box
                   sx={{
                     width: "inherit !important",
@@ -116,35 +104,91 @@ const DoctorList = () => {
                 >
                   <Typography>No Data Found</Typography>
                 </Box>
+              ) : (
+                <TableBody>
+                  {doctors.map((doctor) => (
+                    <TableRow key={doctor.id}>
+                      <TableCell>{doctor.name}</TableCell>
+                      <TableCell>{doctor.address}</TableCell>
+                      <TableCell>{doctor.country}</TableCell>
+                      <TableCell>
+                        <EditIcon
+                          color="primary"
+                          sx={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setSelectedDoctor(doctor);
+                            handleOpenUpdate();
+                          }}
+                        />
+                        <DeleteIcon
+                          sx={{ marginLeft: "10px", cursor: "pointer" }}
+                          color="error"
+                          onClick={() => handleDelete(doctor.id)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
               )}
             </Table>
           </TableContainer>
         </Box>
+        <Modal
+          open={openCreate}
+          onClose={handleClose}
+          aria-labelledby="Add_doctor"
+          aria-describedby="Add_doctor"
+          disableBackdropClick
+        >
+          <Card style={ModalStyle}>
+            <IconButton
+              onClick={handleClose}
+              style={{ position: "absolute", right: 8, top: 8 }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography id="modal-modal-title" variant="h5" component="h2">
+              Add Doctor
+            </Typography>
+            <Box p={3}>
+              <DoctorForm
+                onHandleCancel={handleClose}
+                refresh={fetchDoctors}
+                type={"create"}
+              />
+            </Box>
+          </Card>
+        </Modal>
+        <Modal
+          open={openUpdate}
+          onClose={handleClose}
+          aria-labelledby="Edit_doctor"
+          aria-describedby="Edit_doctor"
+          disableBackdropClick
+        >
+          <Card style={ModalStyle}>
+            <IconButton
+              onClick={handleClose}
+              style={{ position: "absolute", right: 8, top: 8 }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography id="modal-modal-title" variant="h5" component="h2">
+              Edit Doctor
+            </Typography>
+            <Box p={3}>
+              <DoctorForm
+                onHandleCancel={handleClose}
+                refresh={fetchDoctors}
+                editDoctorForm={selectedDoctor}
+                type={"edit"}
+              />
+            </Box>
+          </Card>
+        </Modal>
       </Box>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        disableBackdropClick
-      >
-        <Card style={ModalStyle}>
-          <IconButton
-            onClick={handleClose}
-            style={{ position: "absolute", right: 8, top: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <Typography id="modal-modal-title" variant="h5" component="h2">
-            Add Doctor
-          </Typography>
-          <Box p={3}>
-            <DoctorForm onHandleCancel={handleClose} />
-          </Box>
-        </Card>
-      </Modal>
     </>
   );
 };
 
-export default DoctorList;
+export default HospitalList;

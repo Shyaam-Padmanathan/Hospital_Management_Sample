@@ -18,6 +18,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<HospitalDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        builder => builder
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
+
 // Register Services
 builder.Services.AddScoped<HospitalService>();
 builder.Services.AddScoped<DoctorService>();
@@ -50,6 +60,7 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors("AllowReactApp");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

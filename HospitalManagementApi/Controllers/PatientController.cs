@@ -1,5 +1,6 @@
 using HospitalManagementApi.Models;
 using HospitalManagementApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalManagementApi.Controllers
@@ -15,8 +16,8 @@ namespace HospitalManagementApi.Controllers
             _patientService = patientService;
         }
 
-        // GET: api/patient
-        //[Authorize(Roles = "Admin")]
+        // GET: api/Patient
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Patient>>> GetPatients()
         {
@@ -24,7 +25,7 @@ namespace HospitalManagementApi.Controllers
             return Ok(patients);
         }
 
-        // GET: api/patient/{id}
+        // GET: api/Patient/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Patient>> GetPatient(int id)
         {
@@ -37,7 +38,7 @@ namespace HospitalManagementApi.Controllers
             return Ok(patient);
         }
 
-        // POST: api/patient
+        // POST: api/Patient
         [HttpPost]
         public async Task<ActionResult<Patient>> CreatePatient(Patient patient)
         {
@@ -52,7 +53,7 @@ namespace HospitalManagementApi.Controllers
             }
         }
 
-        // PUT: api/patient/{id}
+        // PUT: api/Patient/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePatient(int id, Patient patient)
         {
@@ -67,7 +68,7 @@ namespace HospitalManagementApi.Controllers
             }
         }
 
-        // DELETE: api/patient/{id}
+        // DELETE: api/Patient/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePatient(int id)
         {

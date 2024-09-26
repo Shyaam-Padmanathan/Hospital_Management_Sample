@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import HospitalList from './components/Hospital/HospitalList';
 import HospitalForm from './components/Hospital/HospitalForm';
@@ -12,6 +12,7 @@ const App = () => {
           <CssBaseline/>
             <Navigation />
             <Routes>
+                <Route path="/" element={<Navigate to="/hospitals" replace />} />
                 <Route path="/hospitals" element={<HospitalList />} />
                 <Route path="/patients" element={<PatientList />} />
                 <Route path="/doctors" element={<DoctorList />} />

@@ -1,18 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextField, Button, Box } from "@mui/material";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // eslint-disable-next-line react/prop-types
-const DoctorForm = ({ onHandleCancel }) => {
-  const [hospital, setHospital] = useState({
+const DoctorForm = ({ onHandleCancel, refresh, editDoctorForm, type }) => {
+  const [doctor, setDoctor] = useState({
     name: "",
     address: "",
     country: "",
   });
 
+  useEffect(() => {
+    if (editDoctorForm) {
+      setDoctor(editDoctorForm);
+    }
+  }, [editDoctorForm]);
+
   const handleChange = (e) => {
-    setHospital({
-      ...hospital,
+    setDoctor({
+      ...doctor,
       [e.target.name]: e.target.value,
     });
   };
@@ -24,10 +31,17 @@ const DoctorForm = ({ onHandleCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/hospitals", hospital); // Replace with your API endpoint
-      // props.onFormSubmit();
+      // eslint-disable-next-line no-debugger
+      debugger;
+      if (type == "create") {
+        await axios.post(`${apiUrl}/Doctor`, doctor);
+      } else {
+        await axios.put(`${apiUrl}/Doctor/${doctor.id}`, doctor);
+      }
+      refresh();
+      onHandleCancel();
     } catch (error) {
-      console.error("There was an error saving the hospital!", error);
+      console.error("There was an error saving the doctor!", error);
     }
   };
 
@@ -36,7 +50,7 @@ const DoctorForm = ({ onHandleCancel }) => {
       <TextField
         label="Name"
         name="name"
-        value={hospital.name}
+        value={doctor.name}
         onChange={handleChange}
         fullWidth
         margin="normal"
@@ -44,7 +58,7 @@ const DoctorForm = ({ onHandleCancel }) => {
       <TextField
         label="Address"
         name="address"
-        value={hospital.address}
+        value={doctor.address}
         onChange={handleChange}
         fullWidth
         margin="normal"
@@ -52,7 +66,7 @@ const DoctorForm = ({ onHandleCancel }) => {
       <TextField
         label="Country"
         name="country"
-        value={hospital.country}
+        value={doctor.country}
         onChange={handleChange}
         fullWidth
         margin="normal"

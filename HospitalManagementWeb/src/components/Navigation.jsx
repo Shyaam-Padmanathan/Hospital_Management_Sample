@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 
 const navItems = [
     { to: "/hospitals", label: "Hospitals" },
-    { to: "/patients", label: "Patients" },
-    { to: "/doctors", label: "Doctors" }
+    { to: "/doctors", label: "Doctors" },
+    { to: "/patients", label: "Patients" }
 ];
 
 const Navigation = () => (
